@@ -36,11 +36,14 @@ isMultipleLines = False
 if(isPhoneService):
     isMultipleLines = st.checkbox("Do you have more than one line with us?")
 
-isInternetService = st.checkbox("Are we your internet provider?")
+internetService = st.selectbox(
+    "Do you use our internet service?",
+    ["Yes, wireless", "Yes, fiber optic", "No"]
+)
 
 isOnlineSecurity = False
 isOnlineBackup = False
-if(isInternetService):
+if(internetService != "No"):
     isOnlineSecurity = st.checkbox("Do you use our online security service?")
     isOnlineBackup = st.checkbox("Do you use our online backup service?")
 
@@ -80,26 +83,26 @@ totalCharges = st.number_input(
     step=1
 )
 
-#SHAPE -> ['SeniorCitizen', 'tenure', 'MonthlyCharges', 'TotalCharges', 'gender_Male', 'Partner_Yes', 'Dependents_Yes', 'Contract_One year', 'Contract_Two year', 'PaperlessBilling_Yes', 'PaymentMethod_Credit card (automatic)', 'PaymentMethod_Electronic check', 'PaymentMethod_Mailed check', 'PhoneService_Yes', 'MultipleLines_Yes', 'InternetService_Fiber optic', 'InternetService_No', 'OnlineSecurity_Yes', 'OnlineBackup_Yes', 'DeviceProtection_Yes', 'TechSupport_Yes', 'StreamingTV_Yes', 'StreamingMovies_Yes']
 if st.button("Process"):
+    #SHAPE -> ['SeniorCitizen', 'tenure', 'MonthlyCharges', 'TotalCharges', 'gender_Male', 'Partner_Yes', 'Dependents_Yes', 'Contract_One year', 'Contract_Two year', 'PaperlessBilling_Yes', 'PaymentMethod_Credit card (automatic)', 'PaymentMethod_Electronic check', 'PaymentMethod_Mailed check', 'PhoneService_Yes', 'MultipleLines_Yes', 'InternetService_Fiber optic', 'InternetService_No', 'OnlineSecurity_Yes', 'OnlineBackup_Yes', 'DeviceProtection_Yes', 'TechSupport_Yes', 'StreamingTV_Yes', 'StreamingMovies_Yes']
     data = [
         isSeniorCitizen,
         tenture,
         monthlyCharges,
         totalCharges,
-        gender.map({'Male': 1, 'Female': 0}),
+        1 if gender == 'Male' else 0,
         isPartner,
         isDependants,
-        contract.map({'Month-to-month': 0, 'One year': 1, 'Two year': 0}),
-        contract.map({'Month-to-month': 0, 'One year': 0, 'Two year': 1}),
+        1 if contract == 'One year' else 0,
+        1 if contract == 'Two year' else 0,
         isPaperless,
-        paymentMethod.map({'Electronic check': 0, 'Mailed check': 0, 'Bank transfer (automatic)': 0, 'Credit card (automatic)': 1}),
-        paymentMethod.map({'Electronic check': 1, 'Mailed check': 0, 'Bank transfer (automatic)': 0, 'Credit card (automatic)': 0}),
-        paymentMethod.map({'Electronic check': 0, 'Mailed check': 1, 'Bank transfer (automatic)': 0, 'Credit card (automatic)': 0}),
+        1 if paymentMethod == 'Credit card (automatic)' else 0,
+        1 if paymentMethod == 'Electronic check' else 0,
+        1 if paymentMethod == 'Mailed check' else 0,
         isPhoneService,
         isMultipleLines,
-        'InternetService_Fiber optic', #forgot this
-        isInternetService,
+        1 if internetService == 'Yes, fiber optic' else 0,
+        1 if internetService == 'No' else 0,
         isOnlineSecurity,
         isOnlineBackup,
         isDeviceProtected,
