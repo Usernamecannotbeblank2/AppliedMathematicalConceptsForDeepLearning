@@ -1,5 +1,6 @@
 import streamlit as st
 import tensorflow as tf
+import numpy as np
 
 st.title("Customer Churn Predictor 🚶‍♂️‍➡️")
 st.markdown("---")
@@ -8,7 +9,7 @@ try:
     model = tf.keras.models.load_model('telco_churn_model_2.8.32_0.26_Isaac.keras')
 except Exception as e:
     st.error(f'ERROR: {e}')
-    #st.stop()
+    st.stop()
 
 
 gender = st.selectbox(
@@ -86,31 +87,32 @@ totalCharges = st.number_input(
 if st.button("Process"):
     #SHAPE -> ['SeniorCitizen', 'tenure', 'MonthlyCharges', 'TotalCharges', 'gender_Male', 'Partner_Yes', 'Dependents_Yes', 'Contract_One year', 'Contract_Two year', 'PaperlessBilling_Yes', 'PaymentMethod_Credit card (automatic)', 'PaymentMethod_Electronic check', 'PaymentMethod_Mailed check', 'PhoneService_Yes', 'MultipleLines_Yes', 'InternetService_Fiber optic', 'InternetService_No', 'OnlineSecurity_Yes', 'OnlineBackup_Yes', 'DeviceProtection_Yes', 'TechSupport_Yes', 'StreamingTV_Yes', 'StreamingMovies_Yes']
     data = [
-        isSeniorCitizen,
-        tenture,
-        monthlyCharges,
-        totalCharges,
+        1 if isSeniorCitizen else 0,
+        1 if tenture else 0,
+        1 if monthlyCharges else 0,
+        1 if totalCharges else 0,
         1 if gender == 'Male' else 0,
-        isPartner,
-        isDependants,
+        1 if isPartner else 0,
+        1 if isDependants else 0,
         1 if contract == 'One year' else 0,
         1 if contract == 'Two year' else 0,
-        isPaperless,
+        1 if isPaperless else 0,
         1 if paymentMethod == 'Credit card (automatic)' else 0,
         1 if paymentMethod == 'Electronic check' else 0,
         1 if paymentMethod == 'Mailed check' else 0,
-        isPhoneService,
-        isMultipleLines,
+        1 if isPhoneService else 0,
+        1 if isMultipleLines else 0,
         1 if internetService == 'Yes, fiber optic' else 0,
         1 if internetService == 'No' else 0,
-        isOnlineSecurity,
-        isOnlineBackup,
-        isDeviceProtected,
-        isTechSupport,
-        isStreamingTV,
-        isStreamingMovies
+        1 if isOnlineSecurity else 0,
+        1 if isOnlineBackup else 0,
+        1 if isDeviceProtected else 0,
+        1 if isTechSupport else 0,
+        1 if isStreamingTV else 0,
+        1 if isStreamingMovies else 0
     ]
 
+    data = np.array([data])
     prediction = model.predict(data)
 
     st.subheader("Prediction:")
