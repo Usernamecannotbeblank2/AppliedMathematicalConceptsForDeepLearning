@@ -1,14 +1,20 @@
 import streamlit as st
 import tensorflow as tf
 import numpy as np
+from back_end import initialize_backend_model, predict_score
+import json
+
+#for testing, delete this section later
+model2 = tf.keras.models.load_model('telco_churn_model_2.8.32_0.26_Isaac.keras')
+model3 = tf.keras.models.load_model('telco_churn_model_16.2.8_0.5_Isaac.keras')
 
 st.title("Customer Churn Predictor 🚪🚶‍♂️‍➡️")
 st.markdown("---")
 
-try:
-    model = tf.keras.models.load_model('telco_churn_model_2.8.32_0.26_Isaac.keras')
-except Exception as e:
-    st.error(f'ERROR: {e}')
+statusCode, jsonResponse = initialize_backend_model()
+response = json.loads(jsonResponse)
+if(statusCode == 500):
+    st.error(f'ERROR: {response["message"]}')
     st.stop()
 
 st.subheader("General info")
@@ -125,12 +131,22 @@ if st.button("Process"):
         isStreamingMovies
     ]
 
-    data = np.array([data])
-    prediction = model.predict(data)
-
-    st.subheader("Prediction:")
-    st.text(prediction[0][0]) # for testing 
-    if prediction[0][0] > 0.5:
-        st.write("the user will be staying with the company 😄")
+    statusCode, jsonResponse = predict_score(json.dumps(data))
+    response = json.loads(jsonResponse)
+    
+    if(statusCode != 200):
+        st.text(f'{response["status"]}: {response["message"]}')
     else:
-        st.write("the user will be leaving us 😔")
+        st.subheader("Prediction:")
+
+        #for testing, delete this section later
+        st.text(response["prediction"])
+        prediction2 = model2.predict(np.array([data]))
+        st.text(prediction2[0][0])
+        prediction3 = model3.predict(np.array([data]))
+        st.text(prediction3[0][0])
+
+        if response["prediction"] > 0.5:
+            st.write("the user will be staying with the company 😄")
+        else:
+            st.write("the user will be leaving us 😔")
