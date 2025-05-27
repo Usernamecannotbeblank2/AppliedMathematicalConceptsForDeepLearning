@@ -4,18 +4,21 @@ import numpy as np
 from back_end import initialize_backend_model, predict_score
 import json
 
-#for testing, delete this section later
-model2 = tf.keras.models.load_model('telco_churn_model_2.8.32_0.26_Isaac.keras')
-model3 = tf.keras.models.load_model('telco_churn_model_16.2.8_0.5_Isaac.keras')
 
 st.title("Customer Churn Predictor 🚪🚶‍♂️‍➡️")
+st.markdown("*For Telco employees only*")
 st.markdown("---")
 
+# initialize model
 statusCode, jsonResponse = initialize_backend_model()
 response = json.loads(jsonResponse)
-if(statusCode == 500):
-    st.error(f'ERROR: {response["message"]}')
+if(statusCode != 200):
+    st.error(f'{response["status"]}: {response["message"]}')
     st.stop()
+
+
+### start of user input ###
+
 
 st.subheader("General info")
 
@@ -36,7 +39,7 @@ isSeniorCitizen = st.checkbox("Senior citizen")
 
 isPartner = st.checkbox("Has partner")
 
-isDependants = st.checkbox("Dependents")
+isDependents = st.checkbox("Dependents")
 
 st.markdown("---")
 st.subheader("Phone Service")
@@ -58,14 +61,14 @@ internetService = st.selectbox(
 
 isOnlineSecurity = False
 isOnlineBackup = False
-isDeviceProtected = False
+isDeviceProtection = False
 isTechSupport = False
 isStreamingTV = False
 isStreamingMovies = False
 if(internetService != "No"):
     isOnlineSecurity = st.checkbox("Online security service")
     isOnlineBackup = st.checkbox("Online backup service")
-    isDeviceProtected = st.checkbox("Device protection")
+    isDeviceProtection = st.checkbox("Device protection")
     isTechSupport = st.checkbox("Technical support")
     isStreamingTV = st.checkbox("TV streaming service")
     isStreamingMovies = st.checkbox("Movie streaming service")
@@ -103,6 +106,10 @@ totalCharges = st.number_input(
     format="%.2f"
 )
 
+
+### end of user input ###
+
+
 if st.button("Process"):
     # SHAPE ORDER -> ['SeniorCitizen', 'tenure', 'MonthlyCharges', 'TotalCharges', 'gender_Male', 'Partner_Yes', 'Dependents_Yes', 'Contract_One year', 'Contract_Two year', 'PaperlessBilling_Yes', 'PaymentMethod_Credit card (automatic)', 'PaymentMethod_Electronic check', 'PaymentMethod_Mailed check', 'PhoneService_Yes', 'MultipleLines_Yes', 'InternetService_Fiber optic', 'InternetService_No', 'OnlineSecurity_Yes', 'OnlineBackup_Yes', 'DeviceProtection_Yes', 'TechSupport_Yes', 'StreamingTV_Yes', 'StreamingMovies_Yes']
     data = [
@@ -112,7 +119,7 @@ if st.button("Process"):
         totalCharges,
         1 if gender == 'Male' else 0,
         isPartner,
-        isDependants,
+        isDependents,
         1 if contract == 'One year' else 0,
         1 if contract == 'Two year' else 0,
         isPaperless,
@@ -131,6 +138,7 @@ if st.button("Process"):
         isStreamingMovies
     ]
 
+    # send to back end to predict outcome
     statusCode, jsonResponse = predict_score(json.dumps(data))
     response = json.loads(jsonResponse)
     
@@ -138,13 +146,6 @@ if st.button("Process"):
         st.text(f'{response["status"]}: {response["message"]}')
     else:
         st.subheader("Prediction:")
-
-        #for testing, delete this section later
-        st.text(response["prediction"])
-        prediction2 = model2.predict(np.array([data]))
-        st.text(prediction2[0][0])
-        prediction3 = model3.predict(np.array([data]))
-        st.text(prediction3[0][0])
 
         if response["prediction"] > 0.5:
             st.write("the user will be staying with the company 😄")
