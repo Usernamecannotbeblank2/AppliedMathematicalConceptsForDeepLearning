@@ -28,7 +28,9 @@ def initialize_backend_model():
     try:
         scaler = joblib.load('minmax_scaler.pkl')
     # if unsuccessful
-    except:
+    except Exception as e:
+        print('----------------------------------------')
+        print(e)
         response_body = {
             "status": "Error",
             "message": "Model loaded but scaler failed."
@@ -36,9 +38,9 @@ def initialize_backend_model():
         return STATUS_UNEXPECTED, json.dumps(response_body)
     
     response_body = {
-            "status": "Success",
-            "message": "Neural network model loaded successfully."
-        }
+        "status": "Success",
+        "message": "Neural network model loaded successfully."
+    }
     return STATUS_OK, json.dumps(response_body)
 
 
@@ -56,8 +58,6 @@ def predict_score(request: str):
     # unkown error handling
     try:
         params = np.array([json.loads(request)]).astype('float32')
-        print("HERE-------------------------")
-        print(params[0][1])
         #transform numerical data
         params[0][1] = scaler.transform(np.array([[params[0][1]]]))
         params[0][2] = scaler.transform(np.array([[params[0][2]]]))
