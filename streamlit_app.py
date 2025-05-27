@@ -80,7 +80,7 @@ isPaperless = st.checkbox("Paperless billing")
 
 contract = st.selectbox(
     "Contract period type",
-    ["Month-to-month", "One year", "Two year"]cd
+    ["Month-to-month", "One year", "Two year"]
 )
 
 paymentMethod = st.selectbox(
