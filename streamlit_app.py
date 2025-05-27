@@ -61,14 +61,14 @@ internetService = st.selectbox(
 
 isOnlineSecurity = False
 isOnlineBackup = False
-isDeviceProtection = False
+isDeviceProtected = False
 isTechSupport = False
 isStreamingTV = False
 isStreamingMovies = False
 if(internetService != "No"):
     isOnlineSecurity = st.checkbox("Online security service")
     isOnlineBackup = st.checkbox("Online backup service")
-    isDeviceProtection = st.checkbox("Device protection")
+    isDeviceProtected = st.checkbox("Device protection")
     isTechSupport = st.checkbox("Technical support")
     isStreamingTV = st.checkbox("TV streaming service")
     isStreamingMovies = st.checkbox("Movie streaming service")
@@ -80,7 +80,7 @@ isPaperless = st.checkbox("Paperless billing")
 
 contract = st.selectbox(
     "Contract period type",
-    ["Month-to-month", "One year", "Two year"]
+    ["Month-to-month", "One year", "Two year"]cd
 )
 
 paymentMethod = st.selectbox(
