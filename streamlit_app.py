@@ -147,6 +147,8 @@ if st.button("Process"):
     else:
         st.subheader("Prediction:")
 
+        st.text(response["prediction"])
+
         if response["prediction"] > 0.5:
             st.write("the user will be staying with the company 😄")
         else:
